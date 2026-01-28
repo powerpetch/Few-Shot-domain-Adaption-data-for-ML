@@ -1,0 +1,260 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "project": "Sugar Crystallization Image Captioning",
+    "description": "Annotated dataset with detailed captions for crystallization phases",
+    "total_images": 0,
+    "created_date": "2025-12-18",
+    "llm_provider": "openai",
+    "llm_model": "gpt-4-vision",
+    "crystallization_phases": 4,
+    "phases": [
+      "unsaturated",
+      "labile",
+      "intermediate",
+      "metastable"
+    ]
+  },
+  "phases_info": {
+    "unsaturated": {
+      "thai_name": "ไม่อิ่มตัว",
+      "characteristics": "Clear transparent liquid, no crystal seeds, under-saturated, stable equilibrium",
+      "growth_range": "0%",
+      "visual_markers": "Clear transparent, no particles, uniform color",
+      "process_stage": "Initial, waiting to crystallize",
+      "next_phase": "labile"
+    },
+    "labile": {
+      "thai_name": "ไม่เสถียร",
+      "characteristics": "Super-saturated, nucleation boundary, primary nucleation zone",
+      "growth_range": "5-15%",
+      "visual_markers": "Very small crystal seeds, mostly clear, early particle appearance",
+      "process_stage": "Seed formation initiated",
+      "next_phase": "intermediate"
+    },
+    "intermediate": {
+      "thai_name": "ระหว่างลิเบิล",
+      "characteristics": "Crystal seeds established and growing, controlled growth period",
+      "growth_range": "15-50%",
+      "visual_markers": "Visible crystal particles, increasing cloudiness, larger crystals",
+      "process_stage": "Active controlled growth",
+      "next_phase": "metastable"
+    },
+    "metastable": {
+      "thai_name": "เสถียรคงเส้น",
+      "characteristics": "All seeds stable, consistent crystal growth, equilibrium approached",
+      "growth_range": "50-100%",
+      "visual_markers": "Large visible crystals, fully saturated, well-formed structures",
+      "process_stage": "Final equilibration, harvest-ready",
+      "next_phase": null
+    }
+  },
+  "annotations": [
+    {
+      "image_id": "unsaturated_001",
+      "image_path": "d:\\user\\CEIPP\\balanced_crystallization\\phy_sugar_db\\unsaturated\\image_001.jpg",
+      "dataset_source": "phy_sugar_db",
+      "phase_label": "unsaturated",
+      "phase_thai_name": "ไม่อิ่มตัว",
+      "caption": "UNSATURATED: Clear, transparent sugar solution with no visible crystal particles. The liquid is under-saturated and in stable equilibrium. No crystallization has occurred. Growth: 0%. Stage: Initial, awaiting supersaturation.",
+      "caption_metadata": {
+        "length_characters": 256,
+        "length_words": 43,
+        "generated_by_model": "gpt-4-vision",
+        "generated_by_provider": "openai",
+        "generated_timestamp": "2025-12-18T10:30:45.123456",
+        "quality_score": 95.0,
+        "validation_status": "approved",
+        "reviewed_by": "user"
+      },
+      "visual_analysis": {
+        "estimated_growth_percentage": 0,
+        "crystal_visibility": "none",
+        "solution_clarity": "clear",
+        "color_intensity": "light",
+        "particle_count": "none",
+        "process_stage": "initial"
+      },
+      "image_metadata": {
+        "width": 1280,
+        "height": 720,
+        "format": "jpg",
+        "file_size_kb": 245.3,
+        "captured_date": "2025-12-01"
+      }
+    },
+    {
+      "image_id": "labile_001",
+      "image_path": "d:\\user\\CEIPP\\balanced_crystallization\\phy_sugar_db\\labile\\image_001.jpg",
+      "dataset_source": "phy_sugar_db",
+      "phase_label": "labile",
+      "phase_thai_name": "ไม่เสถียร",
+      "caption": "LABILE: Very small crystal nuclei beginning to form in the super-saturated solution. Fine particles are barely visible, indicating the nucleation boundary has been crossed. The solution remains mostly clear but shows initial turbidity. Growth: ~10%. Stage: Primary nucleation, seed formation initiated.",
+      "caption_metadata": {
+        "length_characters": 312,
+        "length_words": 54,
+        "generated_by_model": "gpt-4-vision",
+        "generated_by_provider": "openai",
+        "generated_timestamp": "2025-12-18T10:31:12.456789",
+        "quality_score": 92.0,
+        "validation_status": "approved",
+        "reviewed_by": "user"
+      },
+      "visual_analysis": {
+        "estimated_growth_percentage": 10,
+        "crystal_visibility": "very_small",
+        "solution_clarity": "mostly_clear",
+        "color_intensity": "light_medium",
+        "particle_count": "few",
+        "process_stage": "nucleation"
+      },
+      "image_metadata": {
+        "width": 1280,
+        "height": 720,
+        "format": "jpg",
+        "file_size_kb": 267.8,
+        "captured_date": "2025-12-01T02:00:00"
+      }
+    },
+    {
+      "image_id": "intermediate_001",
+      "image_path": "d:\\user\\CEIPP\\balanced_crystallization\\phy_sugar_db\\intermediate\\image_001.jpg",
+      "dataset_source": "phy_sugar_db",
+      "phase_label": "intermediate",
+      "phase_thai_name": "ระหว่างลิเบิล",
+      "caption": "INTERMEDIATE: Visible crystal growth with multiple nuclei developing. The solution is progressively becoming cloudy/turbid as crystals expand. Particle size is increasing noticeably, ranging from microscopic to small visible crystals. Growth: ~35%. Stage: Active controlled growth, crystals establishing structure.",
+      "caption_metadata": {
+        "length_characters": 298,
+        "length_words": 50,
+        "generated_by_model": "gpt-4-vision",
+        "generated_by_provider": "openai",
+        "generated_timestamp": "2025-12-18T10:32:45.789012",
+        "quality_score": 88.0,
+        "validation_status": "approved",
+        "reviewed_by": "user"
+      },
+      "visual_analysis": {
+        "estimated_growth_percentage": 35,
+        "crystal_visibility": "visible",
+        "solution_clarity": "cloudy",
+        "color_intensity": "medium",
+        "particle_count": "many",
+        "process_stage": "growth"
+      },
+      "image_metadata": {
+        "width": 1280,
+        "height": 720,
+        "format": "jpg",
+        "file_size_kb": 289.2,
+        "captured_date": "2025-12-01T04:00:00"
+      }
+    },
+    {
+      "image_id": "metastable_001",
+      "image_path": "d:\\user\\CEIPP\\balanced_crystallization\\phy_sugar_db\\metastable\\image_001.jpg",
+      "dataset_source": "phy_sugar_db",
+      "phase_label": "metastable",
+      "phase_thai_name": "เสถียรคงเส้น",
+      "caption": "METASTABLE: Well-developed crystals fully formed and in stable growth phase. The solution is significantly saturated with mature crystal formations throughout. Color intensity is pronounced, indicating high solute concentration. Crystals show defined structure and size distribution. Growth: ~85%. Stage: Final equilibration, harvest-ready crystallization.",
+      "caption_metadata": {
+        "length_characters": 318,
+        "length_words": 55,
+        "generated_by_model": "gpt-4-vision",
+        "generated_by_provider": "openai",
+        "generated_timestamp": "2025-12-18T10:33:20.234567",
+        "quality_score": 96.0,
+        "validation_status": "approved",
+        "reviewed_by": "user"
+      },
+      "visual_analysis": {
+        "estimated_growth_percentage": 85,
+        "crystal_visibility": "large_well_formed",
+        "solution_clarity": "fully_saturated",
+        "color_intensity": "dark_pronounced",
+        "particle_count": "very_many",
+        "process_stage": "equilibration"
+      },
+      "image_metadata": {
+        "width": 1280,
+        "height": 720,
+        "format": "jpg",
+        "file_size_kb": 312.5,
+        "captured_date": "2025-12-01T06:00:00"
+      }
+    }
+  ],
+  "statistics": {
+    "by_phase": {
+      "unsaturated": {
+        "count": 0,
+        "avg_quality_score": 0.0,
+        "min_quality_score": 0.0,
+        "max_quality_score": 0.0
+      },
+      "labile": {
+        "count": 0,
+        "avg_quality_score": 0.0,
+        "min_quality_score": 0.0,
+        "max_quality_score": 0.0
+      },
+      "intermediate": {
+        "count": 0,
+        "avg_quality_score": 0.0,
+        "min_quality_score": 0.0,
+        "max_quality_score": 0.0
+      },
+      "metastable": {
+        "count": 0,
+        "avg_quality_score": 0.0,
+        "min_quality_score": 0.0,
+        "max_quality_score": 0.0
+      }
+    },
+    "by_dataset": {
+      "phy_sugar_db": 0,
+      "phy_sugar_opr": 0,
+      "vir_polymer": 0
+    },
+    "caption_lengths": {
+      "min_characters": 0,
+      "max_characters": 0,
+      "avg_characters": 0.0
+    },
+    "validation": {
+      "total_validated": 0,
+      "approved": 0,
+      "needs_review": 0,
+      "rejected": 0
+    }
+  },
+  "train_test_split": {
+    "description": "Recommended data splits for machine learning",
+    "strategy": "stratified by phase",
+    "train": {
+      "percentage": 0.8,
+      "count": 0
+    },
+    "validation": {
+      "percentage": 0.1,
+      "count": 0
+    },
+    "test": {
+      "percentage": 0.1,
+      "count": 0
+    }
+  },
+  "usage_notes": {
+    "caption_format": "Each caption includes: [PHASE]: [visual description]. Growth: [X]%. Stage: [process stage]",
+    "growth_percentage": "Estimated crystallization progress (0-100%)",
+    "quality_threshold": "Recommend using only captions with quality_score >= 80.0",
+    "for_training": "Use this dataset to train vision-language models, especially Vision Transformers",
+    "validation_method": "Manual review + LLM consistency checks",
+    "recommended_batch_size": 32,
+    "image_normalization": "Recommended: resize to 224x224, normalize with ImageNet statistics"
+  },
+  "references": {
+    "research_paper": "Petchhan, J., & Su, S. F. (2023). High-Intensified Resemblance and Statistic-Restructured Alignment in Few-Shot Domain Adaptation for Industrial-Specialized Employment. IEEE TCE, 69(3), 353-365",
+    "crystallization_theory": "Based on solubility diagrams and nucleation kinetics",
+    "caption_standards": "See CAPTION_VALIDATION_CHECKLIST.md for detailed criteria"
+  }
+}

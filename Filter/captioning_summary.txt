@@ -1,0 +1,22 @@
+Initial Captions Generation Summary
+======================================================================
+Generated: 2025-12-19T00:30:31.224639
+
+Total Images Processed: 480
+
+Distribution by Phase:
+  INTERMEDIATE    :  120 images
+  LABILE          :  120 images
+  METASTABLE      :  120 images
+  UNSATURATED     :  120 images
+
+Distribution by Material:
+  Physical Sugar (Dense Batch)   :  480 images
+  Physical Sugar (Operation)     :    0 images
+  Virtual Polymer                :    0 images
+
+Output Files Created:
+  - all_initial_captions.json
+  - Gen_captions/ (subdirectory with phase-specific files)
+  - generation_statistics.json
+  - captioning_summary.txt (this file)

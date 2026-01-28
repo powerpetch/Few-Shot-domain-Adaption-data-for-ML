@@ -1,0 +1,43 @@
+{
+  "total_images": 1440,
+  "by_material": {
+    "phy_sugar_db": {
+      "material_name": "Physical Sugar (Dense Batch)",
+      "total_images": 480,
+      "by_phase": {
+        "unsaturated": 120,
+        "labile": 120,
+        "intermediate": 120,
+        "metastable": 120
+      }
+    },
+    "phy_sugar_opr": {
+      "material_name": "Physical Sugar (Operation)",
+      "total_images": 480,
+      "by_phase": {
+        "unsaturated": 120,
+        "labile": 120,
+        "intermediate": 120,
+        "metastable": 120
+      }
+    },
+    "vir_polymer": {
+      "material_name": "Virtual Polymer",
+      "total_images": 480,
+      "by_phase": {
+        "unsaturated": 120,
+        "labile": 120,
+        "intermediate": 120,
+        "metastable": 120
+      }
+    }
+  },
+  "by_phase": {
+    "unsaturated": 360,
+    "labile": 360,
+    "intermediate": 360,
+    "metastable": 360
+  },
+  "growth_statistics": {},
+  "errors": []
+}
