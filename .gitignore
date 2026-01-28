@@ -1,3 +1,9 @@
+# Dataset folder (large files)
+_21p1_pjirayu_Seed-Crystallization-Dataset/
+
+# PDF documents
+High-Intensified_Resemblance_and_Statistic-Restructured_Alignment_i*.pdf
+
 # Virtual Environments
 .venv/
 venv/
