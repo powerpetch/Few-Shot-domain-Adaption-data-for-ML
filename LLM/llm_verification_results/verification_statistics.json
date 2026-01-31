@@ -1,52 +1,30 @@
 {
-  "total_processed": 1125,
-  "successful": 628,
+  "total_processed": 1440,
+  "successful": 267,
   "errors": 0,
   "by_phase": {
     "unsaturated": {
       "total": 360,
       "phase_match": 106,
-      "caption_accurate": 0,
-      "needs_review": 11
+      "caption_accurate": 0
     },
     "labile": {
-      "total": 255,
-      "phase_match": 136,
-      "caption_accurate": 0,
-      "needs_review": 106
+      "total": 360,
+      "phase_match": 156,
+      "caption_accurate": 0
     },
     "intermediate": {
-      "total": 255,
+      "total": 360,
       "phase_match": 0,
-      "caption_accurate": 0,
-      "needs_review": 167
+      "caption_accurate": 0
     },
     "metastable": {
-      "total": 255,
+      "total": 360,
       "phase_match": 5,
-      "caption_accurate": 0,
-      "needs_review": 213
+      "caption_accurate": 0
     }
   },
-  "phase_match_rate": 0.2196,
+  "phase_match_rate": 0.18541666666666667,
   "caption_accuracy_rate": 0.0,
-  "needs_review_count": 497,
-  "validation_summary": {
-    "total_valid_responses": 11864,
-    "total_invalid_responses": 2761,
-    "avg_validation_rate": 81.1
-  },
-  "confidence_distribution": {
-    "high": 172,
-    "medium": 456,
-    "low": 497
-  },
-  "invalid_response_types": {
-    "crystal_clarity_score": 958,
-    "growth_to_next_stage_classification": 463,
-    "image_quality_score": 995,
-    "phase_classification_classification": 315,
-    "overall_verification_score": 30
-  },
-  "cleaned_timestamp": "2026-01-25T22:32:45.366882"
+  "needs_review_count": 1440
 }

@@ -377,6 +377,179 @@ class CrystallizationVerifier:
         
         return response if response else "no response"
     
+    def _validate_response_format(
+        self, 
+        response: str, 
+        expected_type: str, 
+        prompt: str
+    ) -> Tuple[bool, str]:
+        """
+        Validate that the response format matches the expected response type.
+        
+        Args:
+            response: The model's response
+            expected_type: One of 'yes_no', 'classification', 'description', 'score'
+            prompt: The original prompt (used to extract valid options for classification)
+            
+        Returns:
+            Tuple of (is_valid, validation_message)
+        """
+        import re
+        
+        if not response or response == "no response":
+            return False, "Empty or no response"
+        
+        response_lower = response.lower().strip()
+        
+        # Check if response is just echoing/rephrasing the question
+        # Common patterns: contains "answer", "only", question mark, or most of the prompt words
+        prompt_lower = prompt.lower()
+        if 'answer' in response_lower and ('only' in response_lower or '?' in response):
+            return False, f"Response echoes the question: '{response}'"
+        
+        # Check if response contains too many words from the prompt (echoing)
+        prompt_words = set(re.findall(r'\b\w{4,}\b', prompt_lower))
+        response_words = set(re.findall(r'\b\w{4,}\b', response_lower))
+        if prompt_words and response_words:
+            overlap = len(prompt_words & response_words) / len(prompt_words)
+            if overlap > 0.6 and len(response_words) > 3:
+                return False, f"Response appears to echo the prompt: '{response}'"
+        
+        if expected_type == "yes_no":
+            # Valid responses: "yes", "no" (possibly with punctuation)
+            valid_patterns = [r'^yes\.?$', r'^no\.?$', r'^yes,', r'^no,']
+            for pattern in valid_patterns:
+                if re.match(pattern, response_lower):
+                    return True, "Valid yes/no response"
+            # Also accept if response starts with yes or no as the main answer
+            if response_lower.startswith('yes') or response_lower.startswith('no'):
+                # Check if it's a clear yes/no at the start
+                first_word = response_lower.split()[0].rstrip('.,!?')
+                if first_word in ['yes', 'no']:
+                    return True, "Valid yes/no response"
+            return False, f"Expected 'yes' or 'no', got: '{response}'"
+        
+        elif expected_type == "score":
+            # Extract what numbers are valid from the prompt
+            # e.g., "Answer only 1, 2, 3, 4, or 5" or "Answer a number 0 to 100" or "1 to 10"
+            
+            # First, check if response is mostly a number (not echoing prompt)
+            # Valid: "5", "42", "3." Invalid: "answer only 1, 2, 3, 4, or 5"
+            clean_response = re.sub(r'[^\d\s]', '', response).strip()
+            numbers_in_response = re.findall(r'\b(\d+)\b', response)
+            
+            # If response has many numbers, it might be echoing the options
+            if len(numbers_in_response) > 2:
+                return False, f"Response contains multiple numbers (possibly echoing options): '{response}'"
+            
+            # Check for range pattern like "0 to 100" or "1 to 10"
+            range_match = re.search(r'(\d+)\s*to\s*(\d+)', prompt)
+            if range_match:
+                min_val, max_val = int(range_match.group(1)), int(range_match.group(2))
+                if numbers_in_response:
+                    # Take the first number that's not part of echoing the range
+                    for num in numbers_in_response:
+                        num_int = int(num)
+                        if min_val <= num_int <= max_val:
+                            # Make sure response is concise (not echoing)
+                            if len(response) < 20 or response_lower.strip().isdigit():
+                                return True, f"Valid score: {num_int}"
+                            # Check it's not just echoing "0 to 100"
+                            if 'to' not in response_lower:
+                                return True, f"Valid score: {num_int}"
+                return False, f"Expected single number between {min_val}-{max_val}, got: '{response}'"
+            
+            # Check for explicit list like "1, 2, 3, 4, or 5"
+            prompt_after_answer = prompt.split('Answer')[-1] if 'Answer' in prompt else prompt
+            list_match = re.findall(r'\b(\d+)\b', prompt_after_answer)
+            if list_match:
+                valid_scores = set(list_match)
+                if numbers_in_response:
+                    for num in numbers_in_response:
+                        if num in valid_scores:
+                            # Make sure response is concise
+                            if len(response) < 15:
+                                return True, f"Valid score: {num}"
+                return False, f"Expected single number from {valid_scores}, got: '{response}'"
+            
+            # Generic number check - must be concise
+            if numbers_in_response and len(response) < 15:
+                return True, f"Contains numeric response: {numbers_in_response[0]}"
+            return False, f"Expected numeric score, got: '{response}'"
+        
+        elif expected_type == "classification":
+            # Extract valid options from prompt
+            # e.g., "clear liquid, cloudy liquid, small particles, or large crystals"
+            # or "clear or cloudy" or "photo or generated"
+            
+            # FIRST: Check if response lists multiple options (invalid)
+            if ' or ' in response_lower:
+                return False, f"Response lists multiple options instead of choosing one: '{response}'"
+            
+            # Check for comma-separated list of options in response (also invalid)
+            commas_in_response = response_lower.count(',')
+            if commas_in_response >= 2:
+                return False, f"Response lists multiple options: '{response}'"
+            
+            # Try to find options after "Is this image:" or similar patterns
+            options_text = prompt
+            for prefix in ["Is this image:", "Is this a", "Is the liquid", "Answer"]:
+                if prefix in prompt:
+                    options_text = prompt.split(prefix)[-1]
+                    break
+            
+            # Extract options - they're usually comma or 'or' separated
+            options_text = options_text.replace("?", "").replace(".", "").strip()
+            options_text = re.sub(r'\bAnswer\s*(one|only)?\b', '', options_text, flags=re.IGNORECASE)
+            
+            # Split by comma and 'or'
+            options = []
+            parts = re.split(r',\s*|\s+or\s+', options_text)
+            for part in parts:
+                cleaned = part.strip().lower()
+                if cleaned and len(cleaned) > 1:
+                    options.append(cleaned)
+            
+            if options:
+                # Count how many options appear in the response
+                matches = []
+                for opt in options:
+                    # Check exact match or if option is in response
+                    if opt == response_lower or opt in response_lower:
+                        matches.append(opt)
+                    # Check key words (but be careful)
+                    else:
+                        opt_words = [w for w in opt.split() if len(w) > 3]
+                        for word in opt_words:
+                            if word in response_lower and word not in ['this', 'that', 'with', 'from']:
+                                matches.append(opt)
+                                break
+                
+                # Remove duplicates
+                matches = list(set(matches))
+                
+                # Valid if exactly one option matches
+                if len(matches) == 1:
+                    return True, f"Valid classification: '{matches[0]}'"
+                elif len(matches) > 1:
+                    return False, f"Response matches multiple options {matches}: '{response}'"
+                else:
+                    return False, f"Expected one of {options}, got: '{response}'"
+            
+            # Fallback - just check it's not empty and concise
+            if len(response) < 50:
+                return True, "Classification response provided"
+            return False, f"Classification response too verbose: '{response}'"
+        
+        elif expected_type == "description":
+            # Descriptions are more flexible, just check minimum length
+            if len(response) >= 5:
+                return True, "Valid description"
+            return False, f"Description too short: '{response}'"
+        
+        # Unknown type - accept it
+        return True, f"Unknown response type: {expected_type}"
+
     def verify_caption(
         self, 
         image_path: str, 
@@ -429,11 +602,19 @@ class CrystallizationVerifier:
             
             try:
                 response = self.generate_response(image, prompt_text)
+                # Validate response format matches expected type
+                is_valid, validation_msg = self._validate_response_format(
+                    response, 
+                    prompt_config.expected_response_type,
+                    prompt_text
+                )
+                
                 results["verification_results"][prompt_config.id] = {
                     "prompt": prompt_text,
                     "response": response,
                     "response_type": prompt_config.expected_response_type,
-                    "status": "success"
+                    "status": "success" if is_valid else "invalid_format",
+                    "validation_message": validation_msg
                 }
             except Exception as e:
                 results["verification_results"][prompt_config.id] = {
@@ -454,6 +635,8 @@ class CrystallizationVerifier:
         summary = {
             "total_prompts": len(verification_results),
             "successful_prompts": sum(1 for v in verification_results.values() if v.get("status") == "success"),
+            "invalid_format_prompts": sum(1 for v in verification_results.values() if v.get("status") == "invalid_format"),
+            "error_prompts": sum(1 for v in verification_results.values() if v.get("status") == "error"),
             "phase_match": None,
             "caption_accurate": None,
             "crystal_clarity_score": None,
@@ -464,7 +647,7 @@ class CrystallizationVerifier:
             "confidence_level": "unknown"
         }
         
-        # Extract specific results
+        # Extract specific results - only process responses with valid format (status == "success")
         for prompt_id, result in verification_results.items():
             if result.get("status") != "success":
                 continue
@@ -548,9 +731,18 @@ class CrystallizationVerifier:
         # Particles visible consistency (1 point)
         if summary.get("particles_visible") is not None:
             confidence_points += 1
+        
+        # Penalty for invalid format responses (reduces confidence)
+        invalid_format_penalty = summary["invalid_format_prompts"]
+        confidence_points = max(0, confidence_points - invalid_format_penalty)
             
         # Determine confidence level (max 8 points now)
-        if confidence_points >= 5:
+        # Also mark for review if too many invalid format responses
+        if summary["invalid_format_prompts"] >= 3:
+            summary["confidence_level"] = "low"
+            summary["needs_review"] = True
+            summary["review_reason"] = "Too many invalid format responses"
+        elif confidence_points >= 5:
             summary["confidence_level"] = "high"
             summary["needs_review"] = False
         elif confidence_points >= 3:
@@ -567,7 +759,7 @@ class CrystallizationVerifier:
 def run_batch_verification(
     captions_file: str = None,
     output_dir: str = None,
-    model_name: str = "blip2_opt",
+    model_name: str = "blip2_small",
     sample_size: int = None,
     prompts_to_use: List[str] = None,
     resume: bool = True
@@ -866,8 +1058,8 @@ def main():
     )
     parser.add_argument(
         "--model",
-        default="blip2_opt",
-        help="Model to use (blip2_opt, blip2_flan, blip2_opt_6.7b)"
+        default="blip2_small",
+        help="Model to use (blip2_small, blip2_flan, blip2_flan_8bit, blip2_flan_xxl)"
     )
     parser.add_argument(
         "--sample",
